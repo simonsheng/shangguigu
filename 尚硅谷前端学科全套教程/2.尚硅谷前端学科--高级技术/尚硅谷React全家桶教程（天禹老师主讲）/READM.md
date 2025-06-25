@@ -34,20 +34,129 @@
   - {表达式}
   - className
   - style={{}}
-- [ ] 006_尚硅谷react教程_jsx小练习 22:13
-- [ ] 007_尚硅谷react教程_组件与模块 08:04
-- [ ] 008_尚硅谷react教程_开发者工具的安装 06:44
-- [ ] 009_尚硅谷react教程_函数式组件 17:34
-- [ ] 010_尚硅谷react教程_复习类相关知识 27:45
-- [ ] 011_尚硅谷react教程_类式组件 17:41
-- [ ] 012_尚硅谷react教程_对state的理解 06:43
-- [ ] 013_尚硅谷react教程_初始化state 13:03
-- [ ] 014_尚硅谷react教程_react中的事件绑定 12:54
-- [ ] 015_尚硅谷react教程_类中方法中的this 23:41
-- [ ] 016_尚硅谷react教程_解决类中this指向问题 08:08
-- [ ] 017_尚硅谷react教程_setState的使用 19:43
-- [ ] 018_尚硅谷react教程_state的简写方式 18:04
-- [ ] 019_尚硅谷react教程_总结state 04:22
+- [x] 006_尚硅谷react教程_jsx小练习 22:13
+- [x] 007_尚硅谷react教程_组件与模块 08:04
+- [x] 008_尚硅谷react教程_开发者工具的安装 06:44
+- [x] 009_尚硅谷react教程_函数式组件 17:3
+  - function foo(){}
+  - this is undefined
+  - babel open 'use strict'，它不许this指向任何对象
+- [x] 010_尚硅谷react教程_复习类相关知识 27:45
+
+在 JavaScript 中，call() 方法可以显式地更改函数执行时的 this 指向（即函数内部的上下文对象）。这是由 JavaScript 的 执行上下文（Execution Context） 机制决定的。以下是详细解释：
+
+1. this 的默认绑定规则
+
+JavaScript 函数的 this 默认由 调用方式 决定：
+
+```javascript
+function sayHello() {
+  console.log(this.name);
+}
+
+const obj = { name: "Alice" };
+
+// 默认调用：this 指向全局对象（非严格模式）或 undefined（严格模式）
+sayHello(); // 输出：undefined（浏览器中可能是 window.name）
+
+// 方法调用：this 指向调用它的对象
+obj.sayHello = sayHello;
+obj.sayHello(); // 输出："Alice"
+```
+2. call() 如何强制更改 this？
+call() 是函数原型（Function.prototype）上的方法，它的作用是：
+
+- 立即调用函数，并显式指定函数内部的 this 值。
+- 语法：func.call(thisArg, arg1, arg2...)
+
+```javascript
+function greet() {
+  console.log(`Hello, ${this.name}!`);
+}
+
+const person1 = { name: "Alice" };
+const person2 = { name: "Bob" };
+
+// 用 call() 强制将 this 指向 person1
+greet.call(person1); // 输出："Hello, Alice!"
+
+// 用 call() 将 this 指向 person2
+greet.call(person2); // 输出："Hello, Bob!"
+```
+
+3. 底层原理
+
+当调用 call() 时，JavaScript 引擎会：
+1. 绑定 this：将函数的内部 [[ThisValue]] 设置为 call() 的第一个参数（thisArg）。
+2. 执行函数：以指定的 this 值运行函数代码。
+伪代码模拟 call() 的实现：
+
+```javascript
+Function.prototype.myCall = function(thisArg, ...args) {
+  // 1. 将函数设为 thisArg 的一个临时方法
+  thisArg._tempFunc = this; // this 是原函数
+  // 2. 调用方法（此时 this 自然指向 thisArg）
+  const result = thisArg._tempFunc(...args);
+  // 3. 删除临时方法
+  delete thisArg._tempFunc;
+  return result;
+};
+
+// 使用示例
+greet.myCall(person1); // 效果与 call() 相同
+```
+
+4. 对比 apply() 和 bind()
+- apply()：与 call() 类似，但参数以数组形式传递。
+```javascript
+greet.apply(person1, []); // 同 greet.call(person1)
+```
+
+- bind()：返回一个新函数，永久绑定 this，但不立即执行。
+```javascript
+const boundGreet = greet.bind(person1);
+boundGreet(); // 输出："Hello, Alice!"
+```
+
+5. 使用场景
+- 明确指定上下文：如借用其他对象的方法。
+```javascript
+const car = { brand: "Toyota" };
+
+function showBrand() {
+  console.log(this.brand);
+}
+
+showBrand.call(car); // 输出："Toyota"
+```
+- 类数组操作：如将 arguments 转为数组。
+```javascript
+function convertArgs() {
+  const arr = Array.prototype.slice.call(arguments);
+  console.log(arr);
+}
+convertArgs(1, 2, 3); // 输出：[1, 2, 3]
+```
+6. 注意事项
+- 非严格模式：若 thisArg 为 null 或 undefined，this 会指向全局对象（如 window）。
+- 箭头函数：call() 对箭头函数无效（因其 this 由词法作用域决定）。
+```javascript
+const arrowFunc = () => console.log(this);
+arrowFunc.call({ name: "Alice" }); // this 仍是外层作用域的 this
+```
+- [x] 011_尚硅谷react教程_类式组件 17:41
+  - onClick="demo()" call demo() then return the result. for this case it's undefined
+  - onClick="demo", pass the function name as onclick="demo()"
+- [x] 012_尚硅谷react教程_对state的理解 06:43
+- [x] 013_尚硅谷react教程_初始化state 13:03
+- [x] 014_尚硅谷react教程_react中的事件绑定 12:54
+- [x] 015_尚硅谷react教程_类中方法中的this 23:41
+- [x] 016_尚硅谷react教程_解决类中this指向问题 08:08
+- [x] 017_尚硅谷react教程_setState的使用 19:43
+  - render 1+n 次
+- [x] 018_尚硅谷react教程_state的简写方式 18:04
+  - ()=>{}，自动找外层函数的this
+- [x] 019_尚硅谷react教程_总结state 04:22
 - [ ] 020_尚硅谷react教程_props的基本使用 10:21
 - [ ] 021_尚硅谷react教程_批量传递props 17:38
 - [ ] 022_尚硅谷react教程_对props进行限制 23:20
